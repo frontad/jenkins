@@ -1,5 +1,12 @@
 FROM centos
-RUN yum install -y epel-release && yum clean all && yum install -y supervisor java-1.8.0-openjdk-devel &&  yum clean all && rm -rf /var/cache/yum
+RUN yum install -y epel-release && \
+    yum clean all && \
+    yum install -y supervisor \
+    java-1.8.0-openjdk-devel \
+    openssh-server \
+    python36 python36-setuptools && \
+    yum clean all && rm -rf /var/cache/yum 
+RUN easy_install-3.6 pip
 ARG user=jenkins
 ARG group=jenkins
 ARG uid=1000
@@ -47,7 +54,15 @@ USER ${user}
 
 COPY jenkins-support /usr/local/bin/jenkins-support
 COPY jenkins.sh /usr/local/bin/jenkins.sh
-ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/jenkins.sh"]
+#ENTRYPOINT ["/bin/tini", "--", "/usr/local/bin/jenkins.sh"]
 
 COPY plugins.sh /usr/local/bin/plugins.sh
 COPY install-plugins.sh /usr/local/bin/install-plugins.sh
+
+USER root
+RUN echo 'root:screencast' | chpasswd
+COPY supervisord.conf /etc/supervisord.conf
+RUN mkdir -p /var/log/supervisor /opt/kp /opt/keepalived
+RUN ln -sf /dev/stdout /var/log/supervisor/sshd_stdout.log
+RUN ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa
+ENTRYPOINT ["/bin/tini", "--", "/usr/bin/supervisord"]
