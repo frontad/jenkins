@@ -60,9 +60,14 @@ COPY plugins.sh /usr/local/bin/plugins.sh
 COPY install-plugins.sh /usr/local/bin/install-plugins.sh
 
 USER root
-RUN echo 'root:screencast' | chpasswd
+RUN echo 'root:8lab.8lab' | chpasswd
 COPY supervisord.conf /etc/supervisord.conf
+COPY supervisor /opt/supervisor
+COPY entrypoint.sh /opt/script/entrypoint.sh
+RUN chmod +x /opt/script/entrypoint.sh
 RUN mkdir -p /var/log/supervisor /opt/kp /opt/keepalived
 RUN ln -sf /dev/stdout /var/log/supervisor/sshd_stdout.log
 RUN ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa
-ENTRYPOINT ["/bin/tini", "--", "/usr/bin/supervisord"]
+#ENTRYPOINT ["/bin/tini", "--", "/usr/bin/supervisord"]
+WORKDIR /opt/script
+ENTRYPOINT ["/opt/script/entrypoint.sh"]
