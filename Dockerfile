@@ -32,9 +32,10 @@ RUN curl -fsSL https://github.com/krallin/tini/releases/download/v${TINI_VERSION
 COPY init.groovy /usr/share/jenkins/ref/init.groovy.d/tcp-slave-agent-port.groovy
 
 ARG JENKINS_VERSION
-ENV JENKINS_VERSION ${JENKINS_VERSION:-2.60.3}
+ENV JENKINS_VERSION ${JENKINS_VERSION:-2.121.2}
 
-ARG JENKINS_SHA=2d71b8f87c8417f9303a73d52901a59678ee6c0eefcf7325efed6035ff39372a
+#ARG JENKINS_SHA=2d71b8f87c8417f9303a73d52901a59678ee6c0eefcf7325efed6035ff39372a
+ARG JENKINS_SHA=da0f9d106e936246841a898471783fb4fbdbbacc8d42a156b7306a0855189602
 
 ARG JENKINS_URL=https://repo.jenkins-ci.org/public/org/jenkins-ci/main/jenkins-war/${JENKINS_VERSION}/jenkins-war-${JENKINS_VERSION}.war
 
@@ -65,7 +66,8 @@ COPY supervisord.conf /etc/supervisord.conf
 COPY supervisor /opt/supervisor
 COPY entrypoint.sh /opt/script/entrypoint.sh
 RUN chmod +x /opt/script/entrypoint.sh
-RUN mkdir -p /var/log/supervisor /opt/kp /opt/keepalived
+#RUN chown -R jenkins:jenkins /var/jenkins_home
+RUN mkdir -p /var/log/supervisor
 RUN ln -sf /dev/stdout /var/log/supervisor/sshd_stdout.log
 RUN ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa
 #ENTRYPOINT ["/bin/tini", "--", "/usr/bin/supervisord"]
