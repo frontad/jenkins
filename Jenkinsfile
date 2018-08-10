@@ -1,7 +1,7 @@
 #!groovy
 import groovy.json.*
 
-node("lc_dev") {
+node() {
     stage("fetch code") {
         // code check out
 	    checkout scm
