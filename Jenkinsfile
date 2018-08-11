@@ -16,6 +16,8 @@ node() {
         env.BRNACH = brnc
 	    appName = "web"
 	    registryHost = "192.168.1.201:5000/dev/"
-        def customImage = docker.build("songjenkins:${env.UP_BUILD_NUMBER}")
+        docker.withServer('tcp://192.168.1.177:2375') {
+            def customImage = docker.build("songjenkins:${env.UP_BUILD_NUMBER}")
+        }
     }
 }

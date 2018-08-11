@@ -7,6 +7,10 @@ RUN yum install -y epel-release && \
     python36 python36-setuptools && \
     yum clean all && rm -rf /var/cache/yum 
 RUN easy_install-3.6 pip
+RUN curl -fsSL https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-18.06.0.ce-3.el7.x86_64.rpm \
+    -o /tmp//docker.rpm && \
+    yum install /tmp/docker.rpm -y && \
+    rm -f /tmp/docker.rpm   
 ARG user=jenkins
 ARG group=jenkins
 ARG uid=1000
